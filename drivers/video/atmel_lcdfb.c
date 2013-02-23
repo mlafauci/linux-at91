@@ -24,7 +24,7 @@
 #include <video/atmel_lcdfb.h>
 
 /* configurable parameters */
-#define ATMEL_LCDC_CVAL_DEFAULT		0xc8
+#define ATMEL_LCDC_CVAL_DEFAULT		0xff //0xc8
 #define ATMEL_LCDC_DMA_BURST_LEN	8	/* words */
 #define ATMEL_LCDC_FIFO_SIZE		512	/* words */
 
@@ -91,6 +91,8 @@ static int atmel_bl_update_status(struct backlight_device *bl)
 	struct atmel_lcdfb_info *sinfo = bl_get_data(bl);
 	int power = sinfo->bl_power;
 	int brightness = bl->props.brightness;
+
+	printk("%s: set brightness = %d\n", __FUNCTION__,  brightness);
 
 	/* REVISIT there may be a meaningful difference between
 	 * fb_blank and power ... there seem to be some cases

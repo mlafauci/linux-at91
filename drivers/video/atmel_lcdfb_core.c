@@ -25,7 +25,7 @@
 #include <video/atmel_lcdfb.h>
 
 /* configurable parameters */
-#define ATMEL_LCDC_CVAL_DEFAULT		0xc8
+#define ATMEL_LCDC_CVAL_DEFAULT		0xff 
 
 #ifdef CONFIG_BACKLIGHT_ATMEL_LCDC
 

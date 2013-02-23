@@ -28,7 +28,7 @@
 					 | FBINFO_PARTIAL_PAN_OK \
 					 | FBINFO_HWACCEL_YPAN)
 
-#define ATMEL_LCDC_CVAL_DEFAULT         0xc8
+#define ATMEL_LCDC_CVAL_DEFAULT         0xff
 
 struct atmel_hlcd_dma_desc {
 	u32	address;
@@ -260,9 +260,12 @@ static int atmel_hlcdfb_setup_core_base(struct fb_info *info)
 		dev_dbg(info->device, "  * programming CLKDIV = 0x%08lx\n",
 					value);
 		value = (value << LCDC_LCDCFG0_CLKDIV_OFFSET)
+#ifdef CONFIG_M2_V9X5_DISPLAY_EVB
 			| LCDC_LCDCFG0_CLKPOL
+#endif
 			| LCDC_LCDCFG0_CGDISBASE;
 		lcdc_writel(sinfo, ATMEL_LCDC_LCDCFG0, value);
+		dev_dbg(info->device, "  * LCDC_LCDCFG0 = %08lx\n", value);
 	}
 
 	/* Initialize control register 5 */
@@ -301,6 +304,12 @@ static int atmel_hlcdfb_setup_core_base(struct fb_info *info)
 	value |= (info->var.xres - 1) << LCDC_LCDCFG4_PPL_OFFSET;
 	dev_dbg(info->device, "  * LCDC_LCDCFG4 = %08lx\n", value);
 	lcdc_writel(sinfo, ATMEL_LCDC_LCDCFG4, value);
+
+	dev_dbg(info->device, "  === Disable Sync\n");
+	/* Disable synchronization */
+	lcdc_writel(sinfo, ATMEL_LCDC_LCDDIS, LCDC_LCDDIS_SYNCDIS);
+	while ((lcdc_readl(sinfo, ATMEL_LCDC_LCDSR) & LCDC_LCDSR_LCDSTS))
+		msleep(1);
 
 	lcdc_writel(sinfo, ATMEL_LCDC_BASECFG0, LCDC_BASECFG0_BLEN_AHB_INCR4 | LCDC_BASECFG0_DLBO);
 	lcdc_writel(sinfo, ATMEL_LCDC_BASECFG1, atmel_hlcdfb_get_rgbmode(info));
