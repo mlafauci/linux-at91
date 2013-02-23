@@ -437,11 +437,76 @@ if ARCH_AT91SAM9X5
 
 comment "AT91SAM9x5 Series Board Type"
 
+choice 
+	prompt "Atmel AT91SAM9x5 Series"
+
 config MACH_AT91SAM9X5EK
 	bool "Atmel AT91SAM9x5 Series Evaluation Kit"
 	help
 	  Select this if you re using Atmel's AT91SAM9x5-EK Evaluation Kit.
 	  Supported chips are sam9g15, sam9g25, sam9x25, sam9g35 and sam9x35.
+
+config MACH_VULCANO9X5
+	bool "Metodo2 AT91SAM9x5 CPU module"
+	help
+	  Select this if you re using Metodo2's AT91SAM9x5 Board.
+	  Supported chips are sam9g15, sam9g25, sam9x25, sam9g35 and sam9x35.
+endchoice
+
+config M2_V9X5_REDPINE_WIFI
+	depends on MACH_VULCANO9X5
+	bool "Redpine WiFi support on Vulcano 9x5 module"
+	help
+	  Select this if you re using Metodo2's AT91SAM9x5 Board
+	  with Redpine WiFi support.
+	  
+choice 
+	prompt "Metodo2 Vulcano9x5 Display configuration"
+	depends on MACH_VULCANO9X5
+
+config M2_V9X5_DISPLAY_EVB
+	bool "Display Atmel EVB"
+	help
+	  Select this if you are using Metodo2's AT91SAM9x5 Cpu module
+	  on Atmel EVB
+	
+config M2_V9X5_DISPLAY_43
+	bool "Display 4.3\""
+	help
+	  Select this if you are using Metodo2's AT91SAM9x5 Board
+	  with Display Truly 4.3\""
+
+config M2_V9X5_DISPLAY_7
+	bool "Display 7\""
+	help
+	  Select this if you re using Metodo2's AT91SAM9x5 Board
+	  with GFT Display 7"
+	  
+config M2_V9X5_DISPLAY_104
+	bool "Display 10.4\""
+	help
+	  Select this if you re using Metodo2's AT91SAM9x5 Board
+	  with Ampire Display 10.4"
+endchoice	  
+
+choice 
+	prompt "Metodo2 Vulcano9x5 Customer configuration"
+	depends on MACH_VULCANO9X5
+
+config M2_V9X5_CUSTOM_SIT
+	depends on M2_V9X5_DISPLAY_7
+	bool "Sit Custom board"
+	help
+	  Select this if you are using Metodo2's AT91SAM9x5 Cpu module
+	  on Sit Board
+
+config M2_V9X5_BREAKOUT
+	depends on M2_V9X5_DISPLAY_7
+	bool "Breakout 9x5 board"
+	help
+	  Select this if you are using Metodo2's AT91SAM9x5 Cpu module
+	  on Breakout Board
+endchoice
 
 endif
 
