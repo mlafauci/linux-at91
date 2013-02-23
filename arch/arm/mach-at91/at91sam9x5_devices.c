@@ -1138,11 +1138,11 @@ void __init at91_add_device_lcdc(struct atmel_lcdfb_info *data)
 		return;
 
 	at91_set_A_periph(AT91_PIN_PC26, 0);	/* LCDPWM */
-
+#ifdef CONFIG_M2_V9X5_DISPLAY_7
 	at91_set_A_periph(AT91_PIN_PC27, 0);	/* LCDVSYNC */
 	at91_set_A_periph(AT91_PIN_PC28, 0);	/* LCDHSYNC */
-
 	at91_set_A_periph(AT91_PIN_PC24, 0);	/* LCDDISP */
+#endif
 	at91_set_A_periph(AT91_PIN_PC29, 0);	/* LCDDEN */
 	at91_set_A_periph(AT91_PIN_PC30, 0);	/* LCDPCK */
 
@@ -1164,13 +1164,14 @@ void __init at91_add_device_lcdc(struct atmel_lcdfb_info *data)
 	at91_set_A_periph(AT91_PIN_PC15, 0);	/* LCDD15 */
 	at91_set_A_periph(AT91_PIN_PC16, 0);	/* LCDD16 */
 	at91_set_A_periph(AT91_PIN_PC17, 0);	/* LCDD17 */
+#ifdef CONFIG_M2_V9X5_DISPLAY_7
 	at91_set_A_periph(AT91_PIN_PC18, 0);	/* LCDD18 */
 	at91_set_A_periph(AT91_PIN_PC19, 0);	/* LCDD19 */
 	at91_set_A_periph(AT91_PIN_PC20, 0);	/* LCDD20 */
 	at91_set_A_periph(AT91_PIN_PC21, 0);	/* LCDD21 */
 	at91_set_A_periph(AT91_PIN_PC22, 0);	/* LCDD22 */
 	at91_set_A_periph(AT91_PIN_PC23, 0);	/* LCDD23 */
-
+#endif
 	lcdc_data = *data;
 	platform_device_register(&at91_lcdc_base_device);
 	platform_device_register(&at91_lcdc_ovl_device);

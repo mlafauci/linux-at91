@@ -791,11 +791,14 @@ static void atmci_start_request(struct atmel_mci *host,
 	host->data_status = 0;
 
 	if (host->need_reset) {
+		iflags = mci_readl(host, IMR);
+		iflags &= (MCI_SDIOIRQA | MCI_SDIOIRQB);
 		mci_writel(host, CR, MCI_CR_SWRST);
 		mci_writel(host, CR, MCI_CR_MCIEN);
 		mci_writel(host, MR, host->mode_reg);
 		if (atmci_is_mci2())
 			mci_writel(host, CFG, host->cfg_reg);
+		mci_writel(host, IER, iflags);
 		host->need_reset = false;
 	}
 	mci_writel(host, SDCR, slot->sdc_reg);
@@ -1058,7 +1061,11 @@ static int atmci_get_cd(struct mmc_host *mmc)
 			    slot->detect_is_active_high);
 		dev_dbg(&mmc->class_dev, "card is %spresent\n",
 				present ? "" : "not ");
-	}
+	}else{
+		dev_dbg(&mmc->class_dev, "card is present for sure\n");
+		present = true;
+ 	}
+ 
 
 	return present;
 }
@@ -1173,9 +1180,13 @@ static void atmci_detect_change(unsigned long data)
 	if (test_bit(ATMCI_SHUTDOWN, &slot->flags))
 		return;
 
-	enable_irq(gpio_to_irq(slot->detect_pin));
-	present = !(gpio_get_value(slot->detect_pin) ^
-		    slot->detect_is_active_high);
+	if (gpio_is_valid(slot->detect_pin)) {
+		enable_irq(gpio_to_irq(slot->detect_pin));
+		present = !(gpio_get_value(slot->detect_pin) ^
+		    	slot->detect_is_active_high);
+	}else{
+		present = true;
+	}
 	present_old = test_bit(ATMCI_CARD_PRESENT, &slot->flags);
 
 	dev_vdbg(&slot->mmc->class_dev, "detect change: %d (was %d)\n",
@@ -1654,10 +1665,10 @@ static int __init atmci_init_slot(struct atmel_mci *host,
 			clear_bit(ATMCI_CARD_PRESENT, &slot->flags);
 		}
 	}
-
+#ifndef CONFIG_M2_V9X5_REDPINE_WIFI
 	if (!gpio_is_valid(slot->detect_pin))
 		mmc->caps |= MMC_CAP_NEEDS_POLL;
-
+#endif
 	if (gpio_is_valid(slot->wp_pin)) {
 		if (gpio_request(slot->wp_pin, "mmc_wp")) {
 			dev_dbg(&mmc->class_dev, "no WP pin available\n");

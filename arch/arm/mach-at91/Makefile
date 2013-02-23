@@ -78,6 +78,11 @@ obj-$(CONFIG_MACH_AT91SAM9M10G45EK) += board-sam9m10g45ek.o
 
 # AT91SAM9X5 board-specific support
 obj-$(CONFIG_MACH_AT91SAM9X5EK) += board-sam9x5cm.o board-sam9x5ek.o
+obj-$(CONFIG_M2_V9X5_DISPLAY_EVB) += board-sam9x5cm.o board-m2-v9x5-brk.o
+obj-$(CONFIG_M2_V9X5_DISPLAY_43) += board-m2-v9x5-disp43.o board-sam9x5cm.o
+obj-$(CONFIG_M2_V9X5_CUSTOM_SIT) += board-m2-v9x5-custom-sit.o board-sam9x5cm.o
+obj-$(CONFIG_M2_V9X5_BREAKOUT) += board-m2-v9x5-brk.o board-sam9x5cm.o
+obj-$(CONFIG_M2_V9X5_DISPLAY_104) += board-m2-v9x5-disp104.o board-sam9x5cm.o
 
 # AT91CAP9 board-specific support
 obj-$(CONFIG_MACH_AT91CAP9ADK)	+= board-cap9adk.o

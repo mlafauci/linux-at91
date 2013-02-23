@@ -102,6 +102,17 @@ static struct spi_board_info cm_spi_devices[] = {
 		.irq            = -1,
 	},
 #endif
+#if defined(CONFIG_M2_V9X5_DISPLAY_43)
+{	/* ABB Radio chip */
+	.modalias	= "abb_radio",
+	.chip_select	= 0,
+	.max_speed_hz	= 15 * 1000 * 1000,
+	.bus_num	= 1,
+	.mode		= SPI_MODE_0,
+	.platform_data  = NULL,
+	.irq            = -1,
+},
+#endif
 #endif
 };
 
@@ -110,15 +121,15 @@ static struct spi_board_info cm_spi_devices[] = {
  */
 static struct mtd_partition __initdata cm_nand_partition[] = {
 	{
-		.name	= "Partition 1",
+		.name	= "Partition1",
 		.offset	= 0,
 		.size	= SZ_64M,
 	},
 	{
-		.name	= "Partition 2",
-		.offset	= MTDPART_OFS_NXTBLK,
-		.size	= MTDPART_SIZ_FULL,
-	},
+		.name	= "Partition2",
+ 		.offset	= MTDPART_OFS_NXTBLK,
+ 		.size	= MTDPART_SIZ_FULL,
+ 	},
 };
 
 static struct mtd_partition * __init nand_partitions(int size, int *num_partitions)
@@ -165,13 +176,8 @@ static void __init cm_add_device_nand(void)
 		cm_nand_smc_config.mode |= AT91_SMC_DBW_8;
 
 	/* revision of board modify NAND wiring */
-	if (cm_is_revA()) {
-		cm_nand_data.bus_on_d0 = 1;
-		cm_nand_data.rdy_pin = AT91_PIN_PD6;
-	} else {
-		cm_nand_data.bus_on_d0 = 0;
-		cm_nand_data.rdy_pin = AT91_PIN_PD5;
-	}
+	cm_nand_data.bus_on_d0 = 0;
+	cm_nand_data.rdy_pin = AT91_PIN_PD5;
 
 	/* configure chip-select 3 (NAND) */
 	sam9_smc_configure(3, &cm_nand_smc_config);
@@ -194,6 +200,21 @@ static struct gpio_led cm_leds[] = {
 		.active_low		= 1,
 		.default_trigger	= "mmc0",
 	},
+#ifdef CONFIG_M2_V9X5_SITEL
+	{	/* bluetooth */
+		.name			= "bluet",
+		.gpio			= AT91_PIN_PD16,
+		.active_low		= 1,
+	},
+#endif
+#ifdef CONFIG_M2_V9X5_REDPINE_WIFI
+	{	/* wifi */
+		.name			= "wifi",
+		.gpio			= AT91_PIN_PD14,
+		.active_low		= 1,
+	},
+#endif
+
 };
 
 /*
@@ -227,9 +248,4 @@ void __init cm_board_init(u32 *cm_config)
 	*cm_config |= CM_CONFIG_I2C0_ENABLE;
 	/* LEDs */
 	at91_gpio_leds(cm_leds, ARRAY_SIZE(cm_leds));
-
-	if (cm_is_revA())
-		printk(KERN_CRIT "AT91: CM rev A\n");
-	else
-		printk(KERN_CRIT "AT91: CM rev B and higher\n");
 }
